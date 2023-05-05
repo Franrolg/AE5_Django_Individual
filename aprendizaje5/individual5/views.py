@@ -14,7 +14,6 @@ def index(request):
     if request.method == 'POST':
         messages.success(request, "¡Has iniciado sesión!") if autenticar_usuario(request, request.POST['usuario'], request.POST['contrasena']) else messages.error(request, "¡Error al iniciar sesión!")
         return redirect('index')
-    
     return render(request, 'index.html')
 
 def cerrar_sesion(request):
@@ -24,6 +23,7 @@ def cerrar_sesion(request):
 
 def lista_usuarios(request):
     "Vista para renderizar la página donde se mostrarán los datos de usuarios"
+    if not request.user.is_authenticated: return render(request, 'index.html')
     usuarios = User.objects.all()
     return render(request, 'usuarios.html', {'usuarios': usuarios})
 
@@ -38,6 +38,8 @@ def registrar_usuario(request):
     return render(request, 'registro_usuario.html', {'form':form})
 
 def registrar_proveedor(request):
+    if not request.user.is_authenticated: return render(request, 'index.html')
+
     if request.method == 'POST':
         form = FormularioRegistroProveedor(request.POST)
         if form.is_valid():
